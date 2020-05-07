@@ -18,10 +18,16 @@ export default class App extends Component {
           title: 'Task2',
         },
       ],
-      inputValue: '',
+
+      uniqueId: 2, // todoが初期値で2つあるため、todo追加した際のidの採番を3から開始する
+      inputValue: '', // todo追加フォームの入力値(初期値は空文字)
     };
+    // メソッドにthisをbind
+    // (関数を入れ子にすると、thisの値が変わってしまう)
+    // (アロー関数で記載するならば、constructorでのthisのbindの記載は不要)
     this.handleAdd = this.handleAdd.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   // todo追加処理
@@ -30,9 +36,11 @@ export default class App extends Component {
     if (e.keyCode === 13) {
       this.setState({
         todos: this.state.todos.concat({
-          id: this.state.todos.length + 1,
+          id: this.state.uniqueId + 1,
           title: e.target.value,
         }),
+        // 次にtodo追加する際にidが重複するため、インクリメントする
+        uniqueId: this.state.uniqueId + 1,
       });
       // todo追加後、フォームの値をリセットする
       this.setState({ inputValue: '' });
@@ -46,6 +54,17 @@ export default class App extends Component {
     });
   }
 
+  // todo削除機能
+  handleDelete(targetId) {
+    const deleteIndex = this.state.todos.findIndex(
+      (todo) => todo.id === targetId
+    );
+    this.state.todos.splice(deleteIndex, 1);
+    this.setState({
+      todos: this.state.todos,
+    });
+  }
+
   render() {
     return (
       <div className="wrapper">
@@ -56,7 +75,7 @@ export default class App extends Component {
           onChange={this.onChange}
         />
         <SearchTodo />
-        <TodoList todos={this.state.todos} />
+        <TodoList todos={this.state.todos} handleDelete={this.handleDelete} />
       </div>
     );
   }
