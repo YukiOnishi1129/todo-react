@@ -30,6 +30,17 @@ export default class App extends Component {
     this.handleDelete = this.handleDelete.bind(this);
   }
 
+  // ライフサイクルメソッド
+
+  // componentWillMountは非推奨
+  // componentWillMount() {
+  //   console.log('componentWillMount');
+  // }
+
+  componentDidMount() {
+    console.log('componentDidMount');
+  }
+
   // todo追加処理
   handleAdd(e) {
     // エンターキーが押された際にtodoに追加
