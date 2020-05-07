@@ -21,12 +21,15 @@ export default class App extends Component {
 
       uniqueId: 2, // todoが初期値で2つあるため、todo追加した際のidの採番を3から開始する
       inputValue: '', // todo追加フォームの入力値(初期値は空文字)
+      searchKeyWord: '', //検索キーワード
     };
     // メソッドにthisをbind
     // (関数を入れ子にすると、thisの値が変わってしまう)
     // (アロー関数で記載するならば、constructorでのthisのbindの記載は不要)
     this.handleAdd = this.handleAdd.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    this.searchResult = this.searchResult.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
@@ -65,6 +68,19 @@ export default class App extends Component {
     });
   }
 
+  // todo検索機能
+  handleSearch(e) {
+    this.setState({
+      searchKeyWord: e.target.value,
+    });
+  }
+
+  // 正規表現にマッチしたtodoのみ返却する
+  searchResult(todo) {
+    const regexp = new RegExp('^' + this.state.searchKeyWord, 'i');
+    return todo.title.match(regexp);
+  }
+
   // todo削除機能
   handleDelete(targetId) {
     const deleteIndex = this.state.todos.findIndex(
@@ -77,6 +93,10 @@ export default class App extends Component {
   }
 
   render() {
+    // SearchTodoコンポーネントから渡された検索キーワードを元に検索して絞り込む
+    const todos = this.state.searchKeyWord
+      ? this.state.todos.filter(this.searchResult)
+      : this.state.todos;
     return (
       <div className="wrapper">
         <h1 className="title">Todo List</h1>
@@ -85,8 +105,8 @@ export default class App extends Component {
           handleAdd={this.handleAdd}
           onChange={this.onChange}
         />
-        <SearchTodo />
-        <TodoList todos={this.state.todos} handleDelete={this.handleDelete} />
+        <SearchTodo handleSearch={this.handleSearch} />
+        <TodoList todos={todos} handleDelete={this.handleDelete} />
       </div>
     );
   }

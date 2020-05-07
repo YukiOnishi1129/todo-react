@@ -7,13 +7,6 @@ export default class Todo extends Component {
     this.handleClickDelete = this.handleClickDelete.bind(this);
   }
 
-  // ライフサイクルメソッド
-  componentWillUnmount() {
-    alert(
-      `ID: ${this.props.id}, title: ${this.props.title} のtodoが削除されました。`
-    );
-  }
-
   // 親コンポーネントから渡されたメソッドを自分のメソッド内で実行する
   handleClickDelete() {
     if (window.confirm('todoを削除してもいいですか？')) {
