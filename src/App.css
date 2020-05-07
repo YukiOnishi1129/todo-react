@@ -57,6 +57,7 @@ input[type='text']::placeholder {
 }
 
 .todo-task {
+  cursor: pointer;
   display: block;
   margin-top: 8px;
   margin-left: 10px;
