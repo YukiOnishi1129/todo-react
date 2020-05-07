@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 
-export default class AddTodo extends Component {
+class AddTodo extends Component {
   render() {
     return (
       <section className="common-area">
         <h2 className="add-title">ADD TASK</h2>
-        <input type="text" placeholder="New Task" />　
+        <input
+          type="text"
+          placeholder="New Task"
+          value={this.props.value}
+          onChange={this.props.onChange}
+          onKeyDown={this.props.handleAdd}
+        />
       </section>
     );
   }
 }
+
+export default AddTodo;
