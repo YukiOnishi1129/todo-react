@@ -5,11 +5,22 @@ export default class TodoList extends Component {
   constructor(props) {
     super(props);
     // thisをbind
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
+    this.handleChangeFlg = this.handleChangeFlg.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
   }
 
   // 親コンポーネントから渡されたメソッドを自分のメソッド内で実行する
   // (この自分のコンポーネントを子供のTodoコンポーネントへ渡す)
+  // 親コンポーネントのtodo更新処理を実施
+  handleChangeTitle(id, e) {
+    this.props.handleUpdate(id, e);
+  }
+  // 親コンポーネントのtodoのeditFlgをtrueにする(todoを編集モードにする)
+  handleChangeFlg(id) {
+    this.props.changeEditFlg(id);
+  }
+  // 親コンポーネントのtodo削除処理を実施
   handleRemove(id) {
     this.props.handleDelete(id);
   }
@@ -30,7 +41,15 @@ export default class TodoList extends Component {
 
     // map関数で実施した場合(こっちがシンプルに書ける)
     const todolist = this.props.todos.map((todo) => {
-      return <Todo key={todo.id} {...todo} onRemove={this.handleRemove} />;
+      return (
+        <Todo
+          key={todo.id}
+          {...todo}
+          onChangeTitle={this.handleChangeTitle}
+          onChangeFlg={this.handleChangeFlg}
+          onRemove={this.handleRemove}
+        />
+      );
     });
 
     return (

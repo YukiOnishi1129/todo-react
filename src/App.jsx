@@ -12,13 +12,14 @@ export default class App extends Component {
         {
           id: 1,
           title: 'Task1',
+          editFlg: false,
         },
         {
           id: 2,
           title: 'Task2',
+          editFlg: false,
         },
       ],
-
       uniqueId: 2, // todoが初期値で2つあるため、todo追加した際のidの採番を3から開始する
       inputValue: '', // todo追加フォームの入力値(初期値は空文字)
       searchKeyWord: '', //検索キーワード
@@ -30,6 +31,8 @@ export default class App extends Component {
     this.onChange = this.onChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.searchResult = this.searchResult.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.changeEditFlg = this.changeEditFlg.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
@@ -46,12 +49,13 @@ export default class App extends Component {
 
   // todo追加処理
   handleAdd(e) {
-    // エンターキーが押された際にtodoに追加
-    if (e.keyCode === 13) {
+    // エンターキーが押された際にtodoを追加
+    if (e.keyCode === 13 && e.target.value !== '') {
       this.setState({
         todos: this.state.todos.concat({
           id: this.state.uniqueId + 1,
           title: e.target.value,
+          editFlg: false,
         }),
         // 次にtodo追加する際にidが重複するため、インクリメントする
         uniqueId: this.state.uniqueId + 1,
@@ -81,8 +85,36 @@ export default class App extends Component {
     return todo.title.match(regexp);
   }
 
+  // todo更新機能
+  handleUpdate(targetId, e) {
+    // 更新するtodoのidの配列番号を取得
+    const editIndex = this.state.todos.findIndex(
+      (todo) => todo.id === targetId
+    );
+    const nextTodos = this.state.todos;
+    nextTodos[editIndex].title = e.target.value;
+    nextTodos[editIndex].editFlg = false;
+    this.setState({
+      todos: nextTodos,
+    });
+  }
+
+  // 編集モード変更
+  changeEditFlg(targetId) {
+    // 更新するtodoのidの配列番号を取得
+    const editIndex = this.state.todos.findIndex(
+      (todo) => todo.id === targetId
+    );
+    const nextTodos = this.state.todos;
+    nextTodos[editIndex].editFlg = true;
+    this.setState({
+      todos: nextTodos,
+    });
+  }
+
   // todo削除機能
   handleDelete(targetId) {
+    // 削除するtodoのidの配列番号を取得
     const deleteIndex = this.state.todos.findIndex(
       (todo) => todo.id === targetId
     );
@@ -106,7 +138,12 @@ export default class App extends Component {
           onChange={this.onChange}
         />
         <SearchTodo handleSearch={this.handleSearch} />
-        <TodoList todos={todos} handleDelete={this.handleDelete} />
+        <TodoList
+          todos={todos}
+          handleUpdate={this.handleUpdate}
+          changeEditFlg={this.changeEditFlg}
+          handleDelete={this.handleDelete}
+        />
       </div>
     );
   }
